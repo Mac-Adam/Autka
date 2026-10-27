@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="track">
+
+    <!-- Wtyczki systemowe -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <!-- Słońce -->
+    <light type="directional" name="sun">
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Podłoże 20 x 20 m -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>20 20</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>20 20</size></plane></geometry>
+          <material><diffuse>0.3 0.3 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Tor: prostokąt 10 x 6 m z wysepką 6 x 2 m w środku -->
+<model name="track_walls">
+  <static>true</static>
+  <link name="walls">
+    <collision name="outer_00_collision"><pose>-1.656 -3.157 0.175 0 0 3.142</pose><geometry><box><size>2.241 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_00_visual"><pose>-1.656 -3.157 0.175 0 0 3.142</pose><geometry><box><size>2.241 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_01_collision"><pose>-3.297 -3.028 0.175 0 0 2.915</pose><geometry><box><size>1.231 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_01_visual"><pose>-3.297 -3.028 0.175 0 0 2.915</pose><geometry><box><size>1.231 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_02_collision"><pose>-4.197 -2.445 0.175 0 0 2.214</pose><geometry><box><size>1.214 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_02_visual"><pose>-4.197 -2.445 0.175 0 0 2.214</pose><geometry><box><size>1.214 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_03_collision"><pose>-4.537 -1.275 0.175 0 0 1.571</pose><geometry><box><size>1.513 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_03_visual"><pose>-4.537 -1.275 0.175 0 0 1.571</pose><geometry><box><size>1.513 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_04_collision"><pose>-4.246 0.024 0.175 0 0 1.107</pose><geometry><box><size>1.382 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_04_visual"><pose>-4.246 0.024 0.175 0 0 1.107</pose><geometry><box><size>1.382 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_05_collision"><pose>-3.418 0.772 0.175 0 0 0.3</pose><geometry><box><size>1.205 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_05_visual"><pose>-3.418 0.772 0.175 0 0 0.3</pose><geometry><box><size>1.205 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_06_collision"><pose>-2.206 0.938 0.175 0 0 0</pose><geometry><box><size>1.43 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_06_visual"><pose>-2.206 0.938 0.175 0 0 0</pose><geometry><box><size>1.43 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_07_collision"><pose>-1.37 0.976 0.175 0 0 0.232</pose><geometry><box><size>0.41 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_07_visual"><pose>-1.37 0.976 0.175 0 0 0.232</pose><geometry><box><size>0.41 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_08_collision"><pose>-1.07 1.154 0.175 0 0 0.785</pose><geometry><box><size>0.477 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_08_visual"><pose>-1.07 1.154 0.175 0 0 0.785</pose><geometry><box><size>0.477 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_09_collision"><pose>-0.868 1.48 0.175 0 0 1.249</pose><geometry><box><size>0.47 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_09_visual"><pose>-0.868 1.48 0.175 0 0 1.249</pose><geometry><box><size>0.47 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_10_collision"><pose>-0.683 1.952 0.175 0 0 1.166</pose><geometry><box><size>0.705 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_10_visual"><pose>-0.683 1.952 0.175 0 0 1.166</pose><geometry><box><size>0.705 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_11_collision"><pose>-0.202 2.597 0.175 0 0 0.785</pose><geometry><box><size>1.093 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_11_visual"><pose>-0.202 2.597 0.175 0 0 0.785</pose><geometry><box><size>1.093 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_12_collision"><pose>0.635 2.999 0.175 0 0 0.091</pose><geometry><box><size>1.041 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_12_visual"><pose>0.635 2.999 0.175 0 0 0.091</pose><geometry><box><size>1.041 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_13_collision"><pose>1.944 3.043 0.175 0 0 0</pose><geometry><box><size>1.741 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_13_visual"><pose>1.944 3.043 0.175 0 0 0</pose><geometry><box><size>1.741 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_14_collision"><pose>3.312 2.864 0.175 0 0 -0.322</pose><geometry><box><size>1.212 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_14_visual"><pose>3.312 2.864 0.175 0 0 -0.322</pose><geometry><box><size>1.212 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_15_collision"><pose>4.164 2.211 0.175 0 0 -0.983</pose><geometry><box><size>1.219 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_15_visual"><pose>4.164 2.211 0.175 0 0 -0.983</pose><geometry><box><size>1.219 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_16_collision"><pose>4.48 1.121 0.175 0 0 -1.571</pose><geometry><box><size>1.312 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_16_visual"><pose>4.48 1.121 0.175 0 0 -1.571</pose><geometry><box><size>1.312 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_17_collision"><pose>4.171 0.042 0.175 0 0 -2.159</pose><geometry><box><size>1.193 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_17_visual"><pose>4.171 0.042 0.175 0 0 -2.159</pose><geometry><box><size>1.193 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_18_collision"><pose>3.435 -0.592 0.175 0 0 -2.761</pose><geometry><box><size>1.002 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_18_visual"><pose>3.435 -0.592 0.175 0 0 -2.761</pose><geometry><box><size>1.002 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_19_collision"><pose>2.666 -0.848 0.175 0 0 -2.897</pose><geometry><box><size>0.781 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_19_visual"><pose>2.666 -0.848 0.175 0 0 -2.897</pose><geometry><box><size>0.781 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_20_collision"><pose>2.278 -0.954 0.175 0 0 -2.737</pose><geometry><box><size>0.186 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_20_visual"><pose>2.278 -0.954 0.175 0 0 -2.737</pose><geometry><box><size>0.186 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_21_collision"><pose>2.217 -0.995 0.175 0 0 -2.09</pose><geometry><box><size>0.127 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_21_visual"><pose>2.217 -0.995 0.175 0 0 -2.09</pose><geometry><box><size>0.127 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_22_collision"><pose>2.155 -1.344 0.175 0 0 -1.723</pose><geometry><box><size>0.744 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_22_visual"><pose>2.155 -1.344 0.175 0 0 -1.723</pose><geometry><box><size>0.744 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_23_collision"><pose>1.972 -2.114 0.175 0 0 -1.862</pose><geometry><box><size>1.004 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_23_visual"><pose>1.972 -2.114 0.175 0 0 -1.862</pose><geometry><box><size>1.004 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_24_collision"><pose>1.461 -2.834 0.175 0 0 -2.509</pose><geometry><box><size>1.019 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_24_visual"><pose>1.461 -2.834 0.175 0 0 -2.509</pose><geometry><box><size>1.019 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_25_collision"><pose>0.55 -3.135 0.175 0 0 -3.099</pose><geometry><box><size>1.146 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_25_visual"><pose>0.55 -3.135 0.175 0 0 -3.099</pose><geometry><box><size>1.146 0.12 0.35</size></box></geometry></visual>
+    <collision name="outer_26_collision"><pose>-0.279 -3.157 0.175 0 0 3.142</pose><geometry><box><size>0.672 0.12 0.35</size></box></geometry></collision>
+    <visual name="outer_26_visual"><pose>-0.279 -3.157 0.175 0 0 3.142</pose><geometry><box><size>0.672 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_00_collision"><pose>-1.564 -1.557 0.175 0 0 3.142</pose><geometry><box><size>2.059 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_00_visual"><pose>-1.564 -1.557 0.175 0 0 3.142</pose><geometry><box><size>2.059 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_01_collision"><pose>-2.741 -1.514 0.175 0 0 2.915</pose><geometry><box><size>0.464 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_01_visual"><pose>-2.741 -1.514 0.175 0 0 2.915</pose><geometry><box><size>0.464 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_02_collision"><pose>-2.933 -1.465 0.175 0 0 2.214</pose><geometry><box><size>0.096 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_02_visual"><pose>-2.933 -1.465 0.175 0 0 2.214</pose><geometry><box><size>0.096 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_03_collision"><pose>-2.938 -1.197 0.175 0 0 1.571</pose><geometry><box><size>0.602 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_03_visual"><pose>-2.938 -1.197 0.175 0 0 1.571</pose><geometry><box><size>0.602 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_04_collision"><pose>-2.884 -0.829 0.175 0 0 1.107</pose><geometry><box><size>0.321 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_04_visual"><pose>-2.884 -0.829 0.175 0 0 1.107</pose><geometry><box><size>0.321 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_05_collision"><pose>-2.734 -0.691 0.175 0 0 0.3</pose><geometry><box><size>0.279 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_05_visual"><pose>-2.734 -0.691 0.175 0 0 0.3</pose><geometry><box><size>0.279 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_06_collision"><pose>-1.992 -0.662 0.175 0 0 0</pose><geometry><box><size>1.375 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_06_visual"><pose>-1.992 -0.662 0.175 0 0 0</pose><geometry><box><size>1.375 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_07_collision"><pose>-0.872 -0.55 0.175 0 0 0.232</pose><geometry><box><size>1.05 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_07_visual"><pose>-0.872 -0.55 0.175 0 0 0.232</pose><geometry><box><size>1.05 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_08_collision"><pose>0.035 -0.004 0.175 0 0 0.785</pose><geometry><box><size>1.309 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_08_visual"><pose>0.035 -0.004 0.175 0 0 0.785</pose><geometry><box><size>1.309 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_09_collision"><pose>0.58 0.763 0.175 0 0 1.249</pose><geometry><box><size>0.781 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_09_visual"><pose>0.58 0.763 0.175 0 0 1.249</pose><geometry><box><size>0.781 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_10_collision"><pose>0.74 1.211 0.175 0 0 1.166</pose><geometry><box><size>0.331 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_10_visual"><pose>0.74 1.211 0.175 0 0 1.166</pose><geometry><box><size>0.331 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_11_collision"><pose>0.834 1.37 0.175 0 0 0.785</pose><geometry><box><size>0.206 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_11_visual"><pose>0.834 1.37 0.175 0 0 0.785</pose><geometry><box><size>0.206 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_12_collision"><pose>1.032 1.429 0.175 0 0 0.091</pose><geometry><box><size>0.389 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_12_visual"><pose>1.032 1.429 0.175 0 0 0.091</pose><geometry><box><size>0.389 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_13_collision"><pose>1.851 1.443 0.175 0 0 0</pose><geometry><box><size>1.409 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_13_visual"><pose>1.851 1.443 0.175 0 0 0</pose><geometry><box><size>1.409 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_14_collision"><pose>2.668 1.391 0.175 0 0 -0.322</pose><geometry><box><size>0.403 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_14_visual"><pose>2.668 1.391 0.175 0 0 -0.322</pose><geometry><box><size>0.403 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_15_collision"><pose>2.851 1.297 0.175 0 0 -0.983</pose><geometry><box><size>0.185 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_15_visual"><pose>2.851 1.297 0.175 0 0 -0.983</pose><geometry><box><size>0.185 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_16_collision"><pose>2.88 1.121 0.175 0 0 -1.571</pose><geometry><box><size>0.343 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_16_visual"><pose>2.88 1.121 0.175 0 0 -1.571</pose><geometry><box><size>0.343 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_17_collision"><pose>2.844 0.935 0.175 0 0 -2.159</pose><geometry><box><size>0.211 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_17_visual"><pose>2.844 0.935 0.175 0 0 -2.159</pose><geometry><box><size>0.211 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_18_collision"><pose>2.66 0.822 0.175 0 0 -2.761</pose><geometry><box><size>0.397 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_18_visual"><pose>2.66 0.822 0.175 0 0 -2.761</pose><geometry><box><size>0.397 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_19_collision"><pose>2.164 0.676 0.175 0 0 -2.897</pose><geometry><box><size>0.801 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_19_visual"><pose>2.164 0.676 0.175 0 0 -2.897</pose><geometry><box><size>0.801 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_20_collision"><pose>1.46 0.436 0.175 0 0 -2.737</pose><geometry><box><size>0.85 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_20_visual"><pose>1.46 0.436 0.175 0 0 -2.737</pose><geometry><box><size>0.85 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_21_collision"><pose>0.888 -0.097 0.175 0 0 -2.09</pose><geometry><box><size>0.96 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_21_visual"><pose>0.888 -0.097 0.175 0 0 -2.09</pose><geometry><box><size>0.96 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_22_collision"><pose>0.605 -0.899 0.175 0 0 -1.723</pose><geometry><box><size>0.929 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_22_visual"><pose>0.605 -0.899 0.175 0 0 -1.723</pose><geometry><box><size>0.929 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_23_collision"><pose>0.501 -1.451 0.175 0 0 -1.862</pose><geometry><box><size>0.357 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_23_visual"><pose>0.501 -1.451 0.175 0 0 -1.862</pose><geometry><box><size>0.357 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_24_collision"><pose>0.494 -1.559 0.175 0 0 0.633</pose><geometry><box><size>0.163 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_24_visual"><pose>0.494 -1.559 0.175 0 0 0.633</pose><geometry><box><size>0.163 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_25_collision"><pose>0.255 -1.546 0.175 0 0 -3.099</pose><geometry><box><size>0.626 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_25_visual"><pose>0.255 -1.546 0.175 0 0 -3.099</pose><geometry><box><size>0.626 0.12 0.35</size></box></geometry></visual>
+    <collision name="inner_26_collision"><pose>-0.296 -1.557 0.175 0 0 3.142</pose><geometry><box><size>0.638 0.12 0.35</size></box></geometry></collision>
+    <visual name="inner_26_visual"><pose>-0.296 -1.557 0.175 0 0 3.142</pose><geometry><box><size>0.638 0.12 0.35</size></box></geometry></visual>
+  </link>
+</model>
+
+  </world>
+</sdf>
