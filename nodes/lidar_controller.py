@@ -2,6 +2,9 @@
 import math
 import numpy as np
 
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
+
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
@@ -20,7 +23,7 @@ class LidarController(Node):
         self.prev_left_b = []
         self.prev_right_b = []
 
-        self.cmd_pub = self.create_publisher(Twist, "/cmd_vel", 1)
+        self.path_pub = self.create_publisher(Path, "/local_path", 10)
         self.boundaries_pub = self.create_publisher(
             MarkerArray, "/boundaries", 10
         )
@@ -191,10 +194,24 @@ class LidarController(Node):
         ]
         
         self.boundaries_pub.publish(markers)
-        cmd = Twist()
-        cmd.linear.x = 0.4
-        cmd.angular.z = 0.0
-        self.cmd_pub.publish(cmd)
+
+        path_points = list(centers)
+        path = Path()
+        path.header = scan.header
+
+        for x, y in path_points:
+            pose = PoseStamped()
+            pose.header = scan.header
+
+            pose.pose.position.x = float(x)
+            pose.pose.position.y = float(y)
+            pose.pose.position.z = 0.0
+            
+            pose.pose.orientation.w = 1.0
+
+            path.poses.append(pose)
+
+        self.path_pub.publish(path)
 
 
 def main(args=None):
