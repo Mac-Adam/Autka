@@ -61,14 +61,27 @@ class LidarController(Node):
         return marker
 
     def resample(self, boundary, points):
-        if not boundary:
+        if len(boundary) == 0 or points <= 0:
             return []
-        idxs = np.linspace(0,len(boundary)-1,points)
+        
+        boundary = np.asarray(boundary, dtype=float)
+        lengths_cum = np.zeros(len(boundary))
+        for i in range(1,len(boundary)):
+            lengths_cum[i] = lengths_cum[i-1] + np.linalg.norm(boundary[i] - boundary[i-1])
+        lenghts = np.linspace(0,lengths_cum[-1],points)
         res = []
-        for i in idxs:
-            low = int(np.floor(i))
-            high = int(np.ceil(i))
-            res.append(boundary[low] + (i-low)*(boundary[high]-boundary[low]))
+        
+        for l in lenghts:
+            
+            high = int(np.searchsorted(lengths_cum, l, side="right"))
+            if high == len(boundary):
+                res.append(boundary[-1].copy())
+                continue
+            
+            low = high - 1
+            
+            t = (l - lengths_cum[low]) / (lengths_cum[high] - lengths_cum[low])
+            res.append(boundary[low] + t*(boundary[high]-boundary[low]))
         return res
 
     def scan_callback(self, scan):
@@ -102,6 +115,8 @@ class LidarController(Node):
                 right_boundary.append(curr)
             last = curr
             
+        right_boundary = right_boundary[::-1].copy()
+            
         if len(left_boundary) < 2:
             left_boundary = self.prev_left_b
         if len(right_boundary) < 2:
@@ -114,7 +129,54 @@ class LidarController(Node):
             long_boundary = self.resample(right_boundary,long_points)
         else:
             short_boundary = self.resample(right_boundary,short_points)
-            long_boundary = self.resample(left_boundary,long_points)           
+            long_boundary = self.resample(left_boundary,long_points)     
+            
+        Segments = []
+        w_max = 1.8
+        w_track = 1.48
+        if len(long_boundary) >= 2 and len(short_boundary) > 0:
+
+
+            for i_l in range(len(long_boundary)):
+                distances = np.linalg.norm(
+                    short_boundary - long_boundary[i_l],
+                    axis=1,
+                )
+                
+                k = int(np.argmin(distances)) 
+                if distances[k] < w_max:
+                    Segments.append((long_boundary[i_l],short_boundary[k]))
+                else:
+                    tangents = np.gradient(long_boundary, axis=0)
+                    lengths = np.linalg.norm(tangents, axis=1)
+                    if np.any(lengths < 1e-9):
+                        break
+                    tangents = tangents / lengths[:, None]
+                    
+                    # Rotate each tangent by 90 degrees.
+                    normals = np.column_stack((
+                        -tangents[:, 1],
+                        tangents[:, 0],
+                    ))[i_l:]
+                    
+                    R_long = long_boundary[i_l:]
+                    
+                    if Segments:
+                        toward_short = Segments[-1][1] - Segments[-1][0]
+                    else:
+                        toward_short = short_boundary[k] - long_boundary[i_l]
+                        
+                    if np.dot(normals[0], toward_short) < 0:
+                        normals = -normals
+                        
+                    R_short = R_long + normals * w_track
+
+                    Segments.extend(zip(R_long, R_short))
+                    break
+            
+        centers = [ (a + b)/2 for (a,b) in Segments]
+        centers = self.resample(centers,50)
+     
         markers = MarkerArray()
         markers.markers = [
             self.make_boundary_marker(
@@ -123,6 +185,9 @@ class LidarController(Node):
             self.make_boundary_marker(
                 scan.header, long_boundary, 1, (0.0, 0.0, 1.0)
             ),
+            self.make_boundary_marker(
+                scan.header,centers,2,(0.0,1.0,1.0)
+            )
         ]
         
         self.boundaries_pub.publish(markers)
