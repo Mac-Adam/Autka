@@ -20,7 +20,7 @@ def generate_launch_description():
     world_file = os.path.join(pkg_dir, 'worlds', 'track.sdf')
     bridge_config = os.path.join(pkg_dir, 'config', 'bridge_config.yaml')
     xacro_file = os.path.join(pkg_dir, 'urdf', 'roboracer.urdf.xacro')
-    rviz_config = os.path.join(description_dir, 'rviz', 'roboracer.rviz')
+    rviz_config = os.path.join(pkg_dir, 'config', 'my_rviz.rviz')
     
     body_arg = DeclareLaunchArgument('body', default_value='shell', choices=['shell', 'open'])
     rviz_arg = DeclareLaunchArgument('rviz', default_value='true')
@@ -77,6 +77,14 @@ def generate_launch_description():
     )
 
     
+    pure_pursuit = ExecuteProcess(
+        cmd=[
+            'python3', os.path.join(pkg_dir, 'nodes', 'pure_pursuit.py'),
+            '--ros-args', '-p', 'use_sim_time:=true',
+        ],
+        output='screen',
+    )
+
     return LaunchDescription([
         body_arg,
         rviz_arg,
@@ -86,4 +94,5 @@ def generate_launch_description():
         bridge,
         rviz,
         lidar_controller,
+        pure_pursuit,
     ])

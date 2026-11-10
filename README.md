@@ -28,5 +28,5 @@ source install/setup.bash
 ros2 launch roboracer_sim simulation.launch.py
 ```
 
-The launch starts Gazebo, RViz, and the LiDAR driving controller.
+The launch starts Gazebo, RViz, LiDAR path estimator and pure pursuit driving controller.
 Press Ctrl+C to stop.
