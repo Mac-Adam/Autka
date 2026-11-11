@@ -24,6 +24,9 @@ def generate_launch_description():
     
     body_arg = DeclareLaunchArgument('body', default_value='shell', choices=['shell', 'open'])
     rviz_arg = DeclareLaunchArgument('rviz', default_value='true')
+    slam_arg = DeclareLaunchArgument('slam', default_value='true')
+    rviz_fixed_frame_arg = DeclareLaunchArgument(
+        'rviz_fixed_frame', default_value='map')
     
     robot_description = ParameterValue(
         Command(['xacro ', xacro_file, ' body:=', LaunchConfiguration('body')]),
@@ -62,10 +65,35 @@ def generate_launch_description():
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        arguments=['-d', rviz_config, '-f', 'odom'],
+        arguments=[
+            '-d', rviz_config,
+            '-f', LaunchConfiguration('rviz_fixed_frame'),
+        ],
         parameters=[{'use_sim_time': True}],
         condition=IfCondition(LaunchConfiguration('rviz')),
         output='screen'
+    )
+
+    cartographer = Node(
+        package='cartographer_ros',
+        executable='cartographer_node',
+        arguments=[
+            '-configuration_directory', os.path.join(pkg_dir, 'config'),
+            '-configuration_basename', 'cartographer_2d.lua',
+        ],
+        remappings=[('scan', '/scan'), ('odom', '/odom')],
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('slam')),
+        output='screen',
+    )
+
+    occupancy_grid = Node(
+        package='cartographer_ros',
+        executable='cartographer_occupancy_grid_node',
+        arguments=['-resolution', '0.05', '-publish_period_sec', '1.0'],
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('slam')),
+        output='screen',
     )
     
     lidar_controller = ExecuteProcess(
@@ -88,11 +116,15 @@ def generate_launch_description():
     return LaunchDescription([
         body_arg,
         rviz_arg,
+        slam_arg,
+        rviz_fixed_frame_arg,
         robot_state_publisher,
         gazebo,
         spawn_robot,
         bridge,
         rviz,
+        cartographer,
+        occupancy_grid,
         lidar_controller,
         pure_pursuit,
     ])
