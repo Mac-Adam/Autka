@@ -14,8 +14,10 @@ from rclpy.time import Time
 from tf2_ros import Buffer, TransformException, TransformListener
 
 
-SPEED = 0.6
-LOOKAHEAD = 1.2
+SPEED = 0.80
+LOOKAHEAD_TIME = 1.8
+MIN_LOOKAHEAD = 0.85
+MAX_LOOKAHEAD = 1.50
 
 
 def yaw(q):
@@ -28,8 +30,11 @@ class PurePursuit(Node):
     def __init__(self):
         super().__init__('pure_pursuit')
         self.declare_parameter('speed', SPEED)
-        self.declare_parameter('lookahead', LOOKAHEAD)
+        self.declare_parameter('lookahead_time', LOOKAHEAD_TIME)
+        self.declare_parameter('min_lookahead', MIN_LOOKAHEAD)
+        self.declare_parameter('max_lookahead', MAX_LOOKAHEAD)
         self.pose = None
+        self.current_speed = 0.0
         self.path = Path()
         self.last_odom = self.last_path = 0.0
         self.tf_buffer = Buffer(node=self)
@@ -47,6 +52,7 @@ class PurePursuit(Node):
             return
         p = msg.pose.pose.position
         self.pose = (p.x, p.y, yaw(msg.pose.pose.orientation))
+        self.current_speed = msg.twist.twist.linear.x
         self.last_odom = time.monotonic()
 
     def on_path(self, msg):
@@ -57,10 +63,16 @@ class PurePursuit(Node):
         now = time.monotonic()
         drive_command = Twist()
         speed = self.get_parameter('speed').value
-        lookahead = self.get_parameter('lookahead').value
+        lookahead_time = self.get_parameter('lookahead_time').value
+        min_lookahead = self.get_parameter('min_lookahead').value
+        max_lookahead = self.get_parameter('max_lookahead').value
         if (
             ((not math.isfinite(speed)) or (speed < 0.0))
-            or ((not math.isfinite(lookahead)) or (lookahead <= 0.0))
+            or (not math.isfinite(self.current_speed))
+            or ((not math.isfinite(lookahead_time)) or (lookahead_time <= 0.0))
+            or ((not math.isfinite(min_lookahead)) or (min_lookahead <= 0.0))
+            or ((not math.isfinite(max_lookahead))
+                or (max_lookahead < min_lookahead))
             or (self.pose is None)
             or (not self.path.poses)
             or (not self.path.header.frame_id)
@@ -68,6 +80,9 @@ class PurePursuit(Node):
         ):
             self.drive_command_pub.publish(drive_command) # zatrzymanie samochodu
             return
+        lookahead = max(
+            min_lookahead,
+            min(max_lookahead, abs(self.current_speed) * lookahead_time))
         try:
             tf = self.tf_buffer.lookup_transform(
                 'odom', self.path.header.frame_id,
@@ -101,10 +116,8 @@ class PurePursuit(Node):
             else:
                 forward, left = max(forward_points, key=lambda p: p[0])
             distance_squared = forward**2 + left**2
-            distance = math.sqrt(distance_squared)
             curvature = 2 * left / distance_squared
-            drive_command.linear.x = (speed * min(1.0, distance / lookahead)
-                                      / (1.0 + lookahead * abs(curvature)))
+            drive_command.linear.x = speed
             drive_command.angular.z = drive_command.linear.x * curvature
         else:
             self.get_logger().warning(
